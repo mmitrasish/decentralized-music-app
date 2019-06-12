@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
 //                                    startActivity(new Intent(MainActivity.this, MainActivity.class));
 //                                    finish();
+                                    Toast.makeText(MainActivity.this, "User Created" + task.getException(),
+                                            Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 //                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 //                                    startActivity(intent);
 //                                    finish();
+                                    Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
