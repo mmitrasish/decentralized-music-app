@@ -114,7 +114,7 @@ public class CreatorDashboardFragment extends Fragment {
                         mDatabase.child("Users").child(userId).child("Songs").updateChildren(childUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                
+                                Toast.makeText(getActivity(), "Successfully Uploaded", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
