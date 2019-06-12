@@ -34,6 +34,11 @@ public class MainActivity extends AppCompatActivity {
         signin_btn = findViewById(R.id.signin_btn);
         signup_btn = findViewById(R.id.signup_btn);
 
+        if (mAuth.getCurrentUser() != null){
+            startActivity(new Intent(MainActivity.this, HomeActivity.class));
+            finish();
+        }
+
         signup_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-//                                    startActivity(new Intent(MainActivity.this, MainActivity.class));
-//                                    finish();
                                     Toast.makeText(MainActivity.this, "User Created" + task.getException(),
                                             Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(MainActivity.this, DesignationActivity.class));
+                                    finish();
                                 }
                             }
                         });
@@ -110,10 +115,9 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Authentication failed, check your email and password or sign up", Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-//                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                                    startActivity(intent);
-//                                    finish();
                                     Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                                    finish();
                                 }
                             }
                         });
