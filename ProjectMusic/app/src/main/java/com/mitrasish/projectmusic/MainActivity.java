@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         signup_btn = findViewById(R.id.signup_btn);
 
         if (mAuth.getCurrentUser() != null){
-            startActivity(new Intent(MainActivity.this, HomeActivity.class));
+            startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
             finish();
         }
 

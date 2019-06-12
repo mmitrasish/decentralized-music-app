@@ -22,7 +22,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        logout_btn = findViewById(R.id.logout_btn);
+        //logout_btn = findViewById(R.id.logout_btn);
         mAuth = FirebaseAuth.getInstance();
 
         authListener = new FirebaseAuth.AuthStateListener() {

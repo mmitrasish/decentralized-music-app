@@ -11,7 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomeActivity"></activity>
+        <activity
+            android:name=".CreatorBaseActivity"
+            android:label="@string/title_activity_creator_base"></activity>
+        <activity android:name=".HomeActivity" />
         <activity android:name=".CreatorDetailActivity" />
         <activity android:name=".DesignationActivity" />
         <activity android:name=".MainActivity">
