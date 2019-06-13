@@ -38,6 +38,8 @@ public class CreatorBaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_creator_base);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navView.setSelectedItemId(R.id.navigation_home);
+
     }
 
     private boolean loadFragment(Fragment fragment) {

@@ -35,13 +35,18 @@ public class DesignationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                mDatabase.child("Users").child(userId).child("Designation").setValue("Creator").addOnCompleteListener(new OnCompleteListener<Void>() {
+                mDatabase.child("Users").child(userId).child("Designation").setValue("Artist").addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            startActivity(new Intent(DesignationActivity.this, CreatorDetailActivity.class));
-                            finish();
-                        }
+                        mDatabase.child("Artists").child(userId).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    startActivity(new Intent(DesignationActivity.this, CreatorDetailActivity.class));
+                                    finish();
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -53,10 +58,16 @@ public class DesignationActivity extends AppCompatActivity {
                 mDatabase.child("Users").child(userId).child("Designation").setValue("Listener").addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            startActivity(new Intent(DesignationActivity.this, HomeActivity.class));
-                            finish();
-                        }
+                        mDatabase.child("Listener").child(userId).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    startActivity(new Intent(DesignationActivity.this, HomeActivity.class));
+                                    finish();
+                                }
+                            }
+                        });
+
                     }
                 });
             }

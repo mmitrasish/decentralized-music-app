@@ -68,7 +68,7 @@ public class CreatorDetailActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             Toast.makeText(CreatorDetailActivity.this, "Successfully Submitted", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(CreatorDetailActivity.this, HomeActivity.class));
+                            startActivity(new Intent(CreatorDetailActivity.this, CreatorBaseActivity.class));
                             finish();
                         }else {
                             Toast.makeText(CreatorDetailActivity.this, "Not Submitted! Retry Again", Toast.LENGTH_SHORT).show();

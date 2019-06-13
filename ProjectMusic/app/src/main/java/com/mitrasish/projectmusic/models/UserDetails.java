@@ -5,6 +5,9 @@ public class UserDetails {
     private String MobileNumber;
     private String Address;
 
+    public UserDetails() {
+    }
+
     public UserDetails(String fullName, String mobileNumber, String address) {
         FullName = fullName;
         MobileNumber = mobileNumber;

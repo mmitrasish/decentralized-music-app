@@ -11,9 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MusicCreditsActivity"></activity>
         <activity
             android:name=".CreatorBaseActivity"
-            android:label="@string/title_activity_creator_base"></activity>
+            android:label="@string/title_activity_creator_base" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".CreatorDetailActivity" />
         <activity android:name=".DesignationActivity" />

@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             String designation = dataSnapshot.getValue(String.class);
-                                            if (designation.equalsIgnoreCase("Creator")){
+                                            if (designation.equalsIgnoreCase("Artist")){
                                                 Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
                                                 startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
                                                 finish();
