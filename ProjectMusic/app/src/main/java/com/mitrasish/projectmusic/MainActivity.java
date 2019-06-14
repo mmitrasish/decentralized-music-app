@@ -42,8 +42,25 @@ public class MainActivity extends AppCompatActivity {
         signup_btn = findViewById(R.id.signup_btn);
 
         if (mAuth.getCurrentUser() != null){
-            startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
-            finish();
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("Designation");
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String designation = dataSnapshot.getValue(String.class);
+                    if (designation.equalsIgnoreCase("Artist")){
+                        startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
+                        finish();
+                    }else {
+                        startActivity(new Intent(MainActivity.this, ListenerBaseActivity.class));
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.w(MainActivity.this.getLocalClassName(), "loadPost:onCancelled", databaseError.toException());
+                }
+            });
         }
 
         signup_btn.setOnClickListener(new View.OnClickListener() {
@@ -128,12 +145,13 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             String designation = dataSnapshot.getValue(String.class);
+                                            Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
                                             if (designation.equalsIgnoreCase("Artist")){
-                                                Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
                                                 startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
                                                 finish();
                                             }else {
-
+                                                startActivity(new Intent(MainActivity.this, ListenerBaseActivity.class));
+                                                finish();
                                             }
                                         }
 

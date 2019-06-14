@@ -22,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mitrasish.projectmusic.R;
 import com.mitrasish.projectmusic.adapters.ArtistListAdapter;
+import com.mitrasish.projectmusic.adapters.SongAdapter;
+import com.mitrasish.projectmusic.models.SongCredits;
 import com.mitrasish.projectmusic.models.UserDetails;
 
 import java.util.ArrayList;
@@ -30,10 +32,10 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CreatorHomeFragment extends Fragment {
+public class ListenerHomeFragment extends Fragment {
 
 
-    public CreatorHomeFragment() {
+    public ListenerHomeFragment() {
         // Required empty public constructor
     }
 
@@ -42,28 +44,39 @@ public class CreatorHomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_creator_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_listener_home, container, false);
         updateUI(root);
         return root;
     }
 
-    private Button logout_btn;
-    private RecyclerView all_artist_recyclerview;
+
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    private List<UserDetails> userDetailsList;
+    private String userId;
+    private RecyclerView all_song_recycler, all_artist_recycler;
+    private Button logout_btn;
+    private List<SongCredits> allSongsList;
+    private List<UserDetails> allArtistList;
 
     private void updateUI(View root) {
-        logout_btn = root.findViewById(R.id.logout_btn);
-        all_artist_recyclerview = root.findViewById(R.id.all_artist_recyclerview);
 
-        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        userDetailsList = new ArrayList<>();
+        mAuth = FirebaseAuth.getInstance();
+        userId = mAuth.getUid();
+        allSongsList = new ArrayList<>();
+        allArtistList = new ArrayList<>();
 
-        all_artist_recyclerview.setHasFixedSize(true);
-        all_artist_recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        all_artist_recyclerview.setAdapter(new ArtistListAdapter(userDetailsList));
+        all_song_recycler = root.findViewById(R.id.all_song_recycler);
+        all_artist_recycler = root.findViewById(R.id.all_artist_recycler);
+        logout_btn = root.findViewById(R.id.logout_btn);
+
+        all_song_recycler.setHasFixedSize(true);
+        all_song_recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        all_song_recycler.setAdapter(new SongAdapter(allSongsList, getContext()));
+
+        all_artist_recycler.setHasFixedSize(true);
+        all_artist_recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        all_artist_recycler.setAdapter(new ArtistListAdapter(allArtistList));
 
         logout_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +85,7 @@ public class CreatorHomeFragment extends Fragment {
             }
         });
 
+        loadAllMusic();
         getArtistData();
     }
 
@@ -80,13 +94,13 @@ public class CreatorHomeFragment extends Fragment {
         artistsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userDetailsList.clear();
+                allArtistList.clear();
                 for (DataSnapshot artistSnapshot: dataSnapshot.getChildren()) {
                     mDatabase.child("Users").child(artistSnapshot.getKey()).child("PersonalDetails").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            userDetailsList.add(dataSnapshot.getValue(UserDetails.class));
-                            all_artist_recyclerview.getAdapter().notifyDataSetChanged();
+                            allArtistList.add(dataSnapshot.getValue(UserDetails.class));
+                            all_artist_recycler.getAdapter().notifyDataSetChanged();
                         }
 
                         @Override
@@ -97,6 +111,27 @@ public class CreatorHomeFragment extends Fragment {
                 }
 
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(getTag(), databaseError.getMessage());
+            }
+        });
+    }
+
+    private void loadAllMusic() {
+        DatabaseReference songRef = mDatabase.child("Songs");
+        songRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allSongsList.clear();
+                for (DataSnapshot songSnapshot: dataSnapshot.getChildren()) {
+                    SongCredits song = songSnapshot.getValue(SongCredits.class);
+                    song.setSongKey(songSnapshot.getKey());
+                    allSongsList.add(song);
+                    all_song_recycler.getAdapter().notifyDataSetChanged();
+                }
             }
 
             @Override

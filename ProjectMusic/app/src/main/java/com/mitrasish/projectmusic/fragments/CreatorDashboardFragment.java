@@ -18,10 +18,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,18 +30,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mitrasish.projectmusic.CreatorBaseActivity;
-import com.mitrasish.projectmusic.CreatorDetailActivity;
-import com.mitrasish.projectmusic.DesignationActivity;
 import com.mitrasish.projectmusic.MusicCreditsActivity;
 import com.mitrasish.projectmusic.R;
-import com.mitrasish.projectmusic.adapters.CreatorSongAdapter;
+import com.mitrasish.projectmusic.adapters.SongAdapter;
 import com.mitrasish.projectmusic.models.SongCredits;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -88,6 +81,7 @@ public class CreatorDashboardFragment extends Fragment {
         songCredits = new ArrayList<>();
         songs_recyclerview.setHasFixedSize(true);
         songs_recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+        songs_recyclerview.setAdapter(new SongAdapter(songCredits, getContext()));
 
         loadCreatorMusic();
 
@@ -104,15 +98,28 @@ public class CreatorDashboardFragment extends Fragment {
     }
 
     private void loadCreatorMusic() {
-        DatabaseReference songRef = mDatabase.child("Songs");
+        DatabaseReference songRef = mDatabase.child("Users").child(userId).child("Songs");
         songRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 songCredits.clear();
                 for (DataSnapshot songSnapshot: dataSnapshot.getChildren()) {
-                    songCredits.add(songSnapshot.getValue(SongCredits.class));
+                    mDatabase.child("Songs").child(songSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            SongCredits song = dataSnapshot.getValue(SongCredits.class);
+                            song.setSongKey(dataSnapshot.getKey());
+                            songCredits.add(song);
+                            songs_recyclerview.getAdapter().notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.w(getTag(), databaseError.getMessage());
+                        }
+                    });
                 }
-                songs_recyclerview.setAdapter(new CreatorSongAdapter(songCredits));
+
 
             }
 
@@ -134,8 +141,8 @@ public class CreatorDashboardFragment extends Fragment {
                 StorageMetadata metadata = new StorageMetadata.Builder()
                         .setContentType("audio/mp3")
                         .build();
-                StorageReference riversRef = mStorage.getReference().child("Songs/" + uniqueSongID + ".mp3");
-                uploadTask = riversRef.putFile(audioFileUri, metadata);
+                StorageReference songRef = mStorage.getReference().child("Songs/" + uniqueSongID + ".mp3");
+                uploadTask = songRef.putFile(audioFileUri, metadata);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {

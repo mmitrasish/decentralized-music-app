@@ -62,7 +62,7 @@ public class DesignationActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
-                                    startActivity(new Intent(DesignationActivity.this, HomeActivity.class));
+                                    startActivity(new Intent(DesignationActivity.this, ListenerBaseActivity.class));
                                     finish();
                                 }
                             }

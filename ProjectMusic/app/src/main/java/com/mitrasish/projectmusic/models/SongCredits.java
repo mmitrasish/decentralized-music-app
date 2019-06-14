@@ -13,6 +13,7 @@ public class SongCredits {
     private String DirectedBy;
     private String ProducedBy;
     private String SongSource;
+    private String SongKey;
 
     public SongCredits() {
     }
@@ -25,6 +26,14 @@ public class SongCredits {
         DirectedBy = directedBy;
         ProducedBy = producedBy;
         SongSource = songSource;
+    }
+
+    public String getSongKey() {
+        return SongKey;
+    }
+
+    public void setSongKey(String songKey) {
+        SongKey = songKey;
     }
 
     public String getSongName() {
