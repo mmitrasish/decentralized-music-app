@@ -87,7 +87,7 @@ public class MusicCreditsActivity extends AppCompatActivity {
 
 
                 music_key_id = mDatabase.child("Songs").push().getKey();
-                SongCredits songCredits = new SongCredits(song_name, composed_by, lyrics_by, music_by, directed_by, produced_by, music_source_id);
+                SongCredits songCredits = new SongCredits(song_name, composed_by, lyrics_by, music_by, directed_by, produced_by, music_source_id, userId);
                 Map<String, Object> songValue = songCredits.toMap();
                 final Map<String, Object> childUpdates = new HashMap<>();
                 childUpdates.put(music_key_id, songValue);

@@ -14,11 +14,12 @@ public class SongCredits {
     private String ProducedBy;
     private String SongSource;
     private String SongKey;
+    private String SongOwner;
 
     public SongCredits() {
     }
 
-    public SongCredits(String songName, String composedBy, String lyricsBy, String musicBy, String directedBy, String producedBy, String songSource) {
+    public SongCredits(String songName, String composedBy, String lyricsBy, String musicBy, String directedBy, String producedBy, String songSource, String songOwner) {
         SongName = songName;
         ComposedBy = composedBy;
         LyricsBy = lyricsBy;
@@ -26,6 +27,15 @@ public class SongCredits {
         DirectedBy = directedBy;
         ProducedBy = producedBy;
         SongSource = songSource;
+        SongOwner = songOwner;
+    }
+
+    public String getSongOwner() {
+        return SongOwner;
+    }
+
+    public void setSongOwner(String songOwner) {
+        SongOwner = songOwner;
     }
 
     public String getSongKey() {
