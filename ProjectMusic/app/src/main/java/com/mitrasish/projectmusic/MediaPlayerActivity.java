@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,6 +48,7 @@ public class MediaPlayerActivity extends AppCompatActivity {
     private PlayerAdapter mPlayerAdapter;
     private boolean mUserIsSeeking = false;
     final String today_date;
+    private SongCredits current_song;
 
     public MediaPlayerActivity() {
         Date c = Calendar.getInstance().getTime();
@@ -95,7 +97,23 @@ public class MediaPlayerActivity extends AppCompatActivity {
         like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDatabase.child("Contribution").child(today_date).child(userId).child("SongLiked").child(song_key).setValue(1);
+                mDatabase.child("Contribution").child(today_date).child(userId).child("SongDisliked").child(song_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()){
+                            Toast.makeText(getApplicationContext(), "Does not have dislike", Toast.LENGTH_SHORT).show();
+                            mDatabase.child("Contribution").child(today_date).child(userId).child("SongLiked").child(song_key).setValue(1);
+                            if (!userId.equalsIgnoreCase(current_song.getSongOwner())){
+                                mDatabase.child("Contribution").child(today_date).child(current_song.getSongOwner()).child("SongLiker").child(song_key).child(userId).setValue(1);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 like_btn.setEnabled(false);
                 dislike_btn.setEnabled(false);
             }
@@ -104,7 +122,23 @@ public class MediaPlayerActivity extends AppCompatActivity {
         dislike_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDatabase.child("Contribution").child(today_date).child(userId).child("SongDisliked").child(song_key).setValue(1);
+                mDatabase.child("Contribution").child(today_date).child(userId).child("SongLiked").child(song_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()){
+                            Toast.makeText(getApplicationContext(), "Does not have like", Toast.LENGTH_SHORT).show();
+                            mDatabase.child("Contribution").child(today_date).child(userId).child("SongDisliked").child(song_key).setValue(1);
+                            if (!userId.equalsIgnoreCase(current_song.getSongOwner())){
+                                mDatabase.child("Contribution").child(today_date).child(current_song.getSongOwner()).child("SongDisLiker").child(song_key).child(userId).setValue(1);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 like_btn.setEnabled(false);
                 dislike_btn.setEnabled(false);
             }
@@ -161,10 +195,10 @@ public class MediaPlayerActivity extends AppCompatActivity {
         mDatabase.child("Songs").child(song_key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                SongCredits song = dataSnapshot.getValue(SongCredits.class);
-                song_name_text.setText(song.getSongName());
-                composed_by_text.setText(song.getComposedBy());
-                mStorage.child("Songs/" + song.getSongSource()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                current_song = dataSnapshot.getValue(SongCredits.class);
+                song_name_text.setText(current_song.getSongName());
+                composed_by_text.setText(current_song.getComposedBy());
+                mStorage.child("Songs/" + current_song.getSongSource()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         mPlayerAdapter.loadMedia(uri);
@@ -228,6 +262,25 @@ public class MediaPlayerActivity extends AppCompatActivity {
 
                 }
             });
+
+            if (!userId.equalsIgnoreCase(current_song.getSongOwner())){
+                mDatabase.child("Contribution").child(today_date).child(current_song.getSongOwner()).child("SongListener").child(song_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()){
+                            Integer numOfSongPlayed = dataSnapshot.getValue(Integer.class);
+                            mDatabase.child("Contribution").child(today_date).child(current_song.getSongOwner()).child("SongListener").child(song_key).setValue(numOfSongPlayed + 1);
+                        }else {
+                            mDatabase.child("Contribution").child(today_date).child(current_song.getSongOwner()).child("SongListener").child(song_key).setValue(1);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
         }
 
         @Override

@@ -112,6 +112,7 @@ public class SongCredits {
         result.put("DirectedBy", DirectedBy);
         result.put("ProducedBy", ProducedBy);
         result.put("SongSource", SongSource);
+        result.put("SongOwner", SongOwner);
 
         return result;
     }
