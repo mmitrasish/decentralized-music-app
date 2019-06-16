@@ -3,6 +3,7 @@
     package="com.mitrasish.projectmusic">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +12,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DesignationActivity"></activity>
+        <activity android:name=".ShowTransactionActivity"></activity>
+        <activity android:name=".AccountActivity" />
+        <activity android:name=".MediaPlayerActivity" />
+        <activity
+            android:name=".ListenerBaseActivity"
+            android:label="@string/title_activity_listener_base" />
+        <activity android:name=".MusicCreditsActivity" />
+        <activity
+            android:name=".CreatorBaseActivity"
+            android:label="@string/title_activity_creator_base" />
+        <activity android:name=".HomeActivity" />
+        <activity android:name=".CreatorDetailActivity" />
+        <activity android:name=".DesignationActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

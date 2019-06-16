@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,12 +16,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextInputLayout email_input, password_input;
     private Button signin_btn, signup_btn;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,28 @@ public class MainActivity extends AppCompatActivity {
         password_input = findViewById(R.id.password_input);
         signin_btn = findViewById(R.id.signin_btn);
         signup_btn = findViewById(R.id.signup_btn);
+
+        if (mAuth.getCurrentUser() != null){
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("Designation");
+            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String designation = dataSnapshot.getValue(String.class);
+                    if (designation.equalsIgnoreCase("Artist")){
+                        startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
+                        finish();
+                    }else {
+                        startActivity(new Intent(MainActivity.this, ListenerBaseActivity.class));
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.w(MainActivity.this.getLocalClassName(), "loadPost:onCancelled", databaseError.toException());
+                }
+            });
+        }
 
         signup_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,10 +96,10 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-//                                    startActivity(new Intent(MainActivity.this, MainActivity.class));
-//                                    finish();
                                     Toast.makeText(MainActivity.this, "User Created" + task.getException(),
                                             Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(MainActivity.this, DesignationActivity.class));
+                                    finish();
                                 }
                             }
                         });
@@ -110,10 +139,28 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "Authentication failed, check your email and password or sign up", Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-//                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                                    startActivity(intent);
-//                                    finish();
-                                    Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
+                                    String userId = mAuth.getUid();
+                                    mDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("Designation");
+                                    mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            String designation = dataSnapshot.getValue(String.class);
+                                            Toast.makeText(MainActivity.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
+                                            if (designation.equalsIgnoreCase("Artist")){
+                                                startActivity(new Intent(MainActivity.this, CreatorBaseActivity.class));
+                                                finish();
+                                            }else {
+                                                startActivity(new Intent(MainActivity.this, ListenerBaseActivity.class));
+                                                finish();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Log.w(MainActivity.this.getLocalClassName(), "loadPost:onCancelled", databaseError.toException());
+                                        }
+                                    });
+
                                 }
                             }
                         });
