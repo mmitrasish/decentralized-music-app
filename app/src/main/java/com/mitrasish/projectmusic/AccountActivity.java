@@ -56,8 +56,12 @@ public class AccountActivity extends AppCompatActivity {
         mDatabase.child("Users").child(userId).child("Wallet").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Float wallet_tokens = dataSnapshot.getValue(Float.class);
-                wallet_token_text.setText(String.valueOf(df.format(wallet_tokens)));
+                if(dataSnapshot.exists()) {
+                    Float wallet_tokens = dataSnapshot.getValue(Float.class);
+                    wallet_token_text.setText(String.valueOf(df.format(wallet_tokens)));
+                }else{
+                    wallet_token_text.setText("0");
+                }
             }
 
             @Override
